@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import './App.css';
-import Sound from 'react-sound'
+// import Sound from 'react-sound'
 import Transcript from './Transcript';
 const { ipcRenderer } = window.require('electron')
 
@@ -71,7 +71,13 @@ const { ipcRenderer } = window.require('electron')
         <div className='bottom-container'>
           <Transcript transcriptText={this.state.transcript} />
           <div className='annotations'>
-            
+            <form onSubmit={(evt) => {
+              evt.preventDefault()
+              console.log(this.state.words[evt.target.search.value].join(', '))
+            }}>
+              <label htmlFor='search'>Search Keyword</label>
+              <input id='search' name='search' type='text' />
+            </form>
           </div>
         </div>
       </div>
