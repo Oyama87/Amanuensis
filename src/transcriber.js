@@ -39,7 +39,17 @@ module.exports = async function transcribe(filePath, windowContents) {
         windowContents.send('load-transcript', ts)
         if(data.results[0].alternatives[0].words.length > 0) {
           console.log('sending words')
-          windowContents.send('load-words', data.results[0].alternatives[0].words)
+          let wordsArray = data.results[0].alternatives[0].words
+          let hashTable = {}
+          wordsArray.forEach(wordObj => {
+            if(hashTable[wordObj.word]) {
+              hashTable[wordObj.word].push(wordObj.startTime.seconds)
+            }
+            else {
+              hashTable[wordObj.word] = [wordObj.startTime.seconds]
+            }
+          })
+          windowContents.send('load-words', hashTable)
         }
       }
       // console.log(ts)

@@ -14,12 +14,12 @@ const { ipcRenderer } = window.require('electron')
     constructor() {
       super()
       this.state={
-        audioPath: '',
-        soundStatus: Sound.status.STOPPED,
-        currentTime: 0,
-        duration: 0,
+        // audioPath: '',
+        // soundStatus: Sound.status.STOPPED,
+        // currentTime: 0,
+        // duration: 0,
         transcript: '',
-        words: []
+        words: {}
       }
       
       ipcRenderer.on('load-transcript', (event, text) => {
@@ -35,16 +35,17 @@ const { ipcRenderer } = window.require('electron')
         })
       })
       
-      // this.audio = document.createElement('audio')
-      // this.audio.autoplay = true
+      this.audio = document.createElement('audio')
+      this.audio.autoplay = true
+      
       ipcRenderer.on('load-audio', (event, payload) => {
         console.log('load-audio callback')
-        // this.audio.src = `file://${payload}`
-        // this.audio.play()
-        this.setState({
-          audioPath: payload,
-          soundStatus: Sound.status.STOPPED
-        })
+        this.audio.src = `file://${payload}`
+        this.audio.play()
+        // this.setState({
+        //   audioPath: payload,
+        //   soundStatus: Sound.status.STOPPED
+        // })
       })
   }
   
@@ -53,31 +54,10 @@ const { ipcRenderer } = window.require('electron')
       <div className="App">
         <header>
           <div>
-            <Sound 
-              url={`file://${this.state.audioPath}`}
-              playStatus={this.state.soundStatus}
-              onLoad={audio => {
-                if(audio.loaded) {
-                  this.setState({
-                    soundStatus: Sound.status.PLAYING
-                  })
-                }
-              }}
-              onPlaying={audio => this.setState((prev)=> {
-                if(Math.floor(audio.position/1000) === prev.currentTime)
-                return prev
-                else return {
-                  currentTime: Math.floor(audio.position/1000),
-                  duration: audio.duration/1000
-                }
-              })}
-              playFromPosition={0}
-              onFinishedPlaying={()=>{}}
-            />
-            <button onClick={()=> this.setState({soundStatus: Sound.status.PLAYING})}>
+            <button onClick={()=> this.audio.play()}>
               Play
             </button>
-            <button onClick={()=> this.setState({soundStatus: Sound.status.STOPPED})}>
+            <button onClick={()=> this.audio.pause()}>
               Stop
             </button>
           </div>
@@ -102,21 +82,43 @@ const { ipcRenderer } = window.require('electron')
 export default App;
 
 /* <header className="App-header">
-  <img src={logo} className="App-logo" alt="logo" />
-  <p>
-    Edit <code>src/App.js</code> and save to reload.
-  </p>
-  <a
-    className="App-link"
-    href="https://reactjs.org"
-    target="_blank"
-    rel="noopener noreferrer"
-  >
-    Learn React
-  </a>
+<img src={logo} className="App-logo" alt="logo" />
+<p>
+Edit <code>src/App.js</code> and save to reload.
+</p>
+<a
+className="App-link"
+href="https://reactjs.org"
+target="_blank"
+rel="noopener noreferrer"
+>
+Learn React
+</a>
 </header> */
 
 /* <audio ref='audio_tag' id='audio' controls >
-          <source src={song} type='audio/mp4'/>
-          This is not supported
-          </audio> */
+<source src={song} type='audio/mp4'/>
+This is not supported
+</audio> */
+
+{/* <Sound 
+  url={`file://${this.state.audioPath}`}
+  playStatus={this.state.soundStatus}
+  onLoad={audio => {
+    if(audio.loaded) {
+      this.setState({
+        soundStatus: Sound.status.PLAYING
+      })
+    }
+  }}
+  onPlaying={audio => this.setState((prev)=> {
+    if(Math.floor(audio.position/1000) === prev.currentTime)
+    return prev
+    else return {
+      currentTime: Math.floor(audio.position/1000),
+      duration: audio.duration/1000
+    }
+  })}
+  playFromPosition={0}
+  onFinishedPlaying={()=>{}}
+/> */}
