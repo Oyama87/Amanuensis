@@ -21,3 +21,6 @@
 npm-debug.log*
 yarn-debug.log*
 yarn-error.log*
+
+# google credential file
+/Users/justin/notetalker/NoteTalker-3b4a5dc9d1c9.json
