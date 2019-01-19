@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 
-module.exports = async function transcribe(filePath, window) {
+module.exports = async function transcribe(filePath, windowContents) {
   const client = new speech.SpeechClient()
   
   // const file = fs.readFileSync(filePath)
@@ -14,6 +14,7 @@ module.exports = async function transcribe(filePath, window) {
   // }
   
   const config = {
+    enableWordTimeOffsets: true,
     encoding: 'LINEAR16',
     sampleRateHertz: 16000,
     languageCode: 'en-US',
@@ -30,10 +31,20 @@ module.exports = async function transcribe(filePath, window) {
     .streamingRecognize(request)
     .on('error', console.error)
     .on('data', data => {
-      let ts = data.results[0].alternatives[0].transcript
+      // console.log(data.results[0].alternatives[0].stability)
+      let ts 
+      if(data.results[0].stability > 0.5 || data.results[0].alternatives[0].confidence){
+        ts = data.results[0].alternatives[0].transcript
+        // console.log('sending transcript')
+        windowContents.send('load-transcript', ts)
+        if(data.results[0].alternatives[0].words.length > 0) {
+          console.log('sending words')
+          windowContents.send('load-words', data.results[0].alternatives[0].words)
+        }
+      }
       // console.log(ts)
-      // console.log(window.send)
-      window.send('load-transcript', ts)
+      // console.log(windowContentsContents.send)
+      // console.log(data.results[0].alternatives[0].words)
       
       // console.log(`Transcription: ${data.results[0].alternatives[0].transcript}`)
     })
