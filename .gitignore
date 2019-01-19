@@ -23,4 +23,4 @@ yarn-debug.log*
 yarn-error.log*
 
 # google credential file
-/Users/justin/notetalker/NoteTalker-3b4a5dc9d1c9.json
+NoteTalker-3b4a5dc9d1c9.json
