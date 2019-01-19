@@ -17,13 +17,28 @@ const { ipcRenderer } = window.require('electron')
         audioPath: '',
         soundStatus: Sound.status.STOPPED,
         currentTime: 0,
-        duration: 0
+        duration: 0,
+        transcript: '',
+        words: []
       }
+      
+      ipcRenderer.on('load-transcript', (event, text) => {
+        this.setState({
+          transcript: text
+        })
+      })
+      
+      ipcRenderer.on('load-words', (event, words) => {
+        console.log('words', words)
+        this.setState({
+          words
+        })
+      })
       
       // this.audio = document.createElement('audio')
       // this.audio.autoplay = true
       ipcRenderer.on('load-audio', (event, payload) => {
-        // console.log('load-audio callback')
+        console.log('load-audio callback')
         // this.audio.src = `file://${payload}`
         // this.audio.play()
         this.setState({
@@ -74,7 +89,7 @@ const { ipcRenderer } = window.require('electron')
         </header>
         <hr />
         <div className='bottom-container'>
-          <Transcript />
+          <Transcript transcriptText={this.state.transcript} />
           <div className='annotations'>
             
           </div>
