@@ -3,7 +3,7 @@ const fs = require('fs')
 const path = require('path')
 
 
-module.exports = async function transcribe(filePath, windowContents) {
+module.exports = async function transcribe(filePath, windowContents, language) {
   const client = new speech.SpeechClient()
   
   // const file = fs.readFileSync(filePath)
@@ -13,11 +13,15 @@ module.exports = async function transcribe(filePath, windowContents) {
   //   content: audioBytes
   // }
   
+  console.log('in transcriber.js:', language)
+  // if(language !== 'en-US') return
+  
   const config = {
     enableWordTimeOffsets: true,
+    enableAutomaticPunctuation: true,
     encoding: 'LINEAR16',
     sampleRateHertz: 16000,
-    languageCode: 'en-US',
+    languageCode: language,
   }
   
   const request = {
@@ -33,7 +37,7 @@ module.exports = async function transcribe(filePath, windowContents) {
     .on('data', data => {
       // console.log(data.results[0].alternatives[0].stability)
       let ts 
-      if(data.results[0].stability > 0.5 || data.results[0].alternatives[0].confidence){
+      if(data.results[0].stability > 0.75 || data.results[0].alternatives[0].confidence){
         ts = data.results[0].alternatives[0].transcript
         // console.log('sending transcript')
         windowContents.send('load-transcript', ts)
@@ -42,11 +46,11 @@ module.exports = async function transcribe(filePath, windowContents) {
           let wordsArray = data.results[0].alternatives[0].words
           let hashTable = {}
           wordsArray.forEach(wordObj => {
-            if(hashTable[wordObj.word]) {
-              hashTable[wordObj.word].push(wordObj.startTime.seconds)
+            if(hashTable.hasOwnProperty(wordObj.word.toUpperCase())) {
+              hashTable[wordObj.word.toUpperCase()].push(wordObj.startTime.seconds)
             }
             else {
-              hashTable[wordObj.word] = [wordObj.startTime.seconds]
+              hashTable[wordObj.word.toUpperCase()] = [wordObj.startTime.seconds]
             }
           })
           windowContents.send('load-words', hashTable)

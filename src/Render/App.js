@@ -18,7 +18,8 @@ class App extends Component {
       // duration: 0,
       searchResults: [],
       transcript: '',
-      words: {}
+      words: {},
+      readyForSearch: false
     }
     this.audioElement = React.createRef()
     // this.audio = document.createElement('audio')
@@ -34,7 +35,8 @@ class App extends Component {
     ipcRenderer.on('load-words', (event, words) => {
       console.log('words', words)
       this.setState({
-        words
+        words,
+        readyForSearch: true
       })
     })
     
@@ -51,10 +53,14 @@ class App extends Component {
     this.seekToTimeStamp = this.seekToTimeStamp.bind(this)
   }
   
+  sendNewLanguage(language) {
+    ipcRenderer.send('change-language', language)
+  }
+  
   handleSearch = (evt) => {
     evt.preventDefault()
     this.setState({
-      searchResults: this.state.words[evt.target.search.value]
+      searchResults: this.state.words[evt.target.search.value.toUpperCase()]
     })
   }
   
@@ -86,7 +92,7 @@ class App extends Component {
             <progress className='progress' value={50} max={100}></progress>
             <span className='marker'>1</span>
           </div>
-          <p>{this.state.currentTime}</p>
+          <p onClick={() => this.sendNewLanguage('ja-JP')}>Change to JP</p>
         </header>
         <hr />
         <div className='bottom-container'>
@@ -98,9 +104,12 @@ class App extends Component {
             </form>
             <div>
               {
+                this.state.searchResults ?
                 this.state.searchResults.map(timestamp => {
                   return <p onClick={() => this.seekToTimeStamp(timestamp)}>{`00:${timestamp}`}</p>
                 })
+                :
+                <p>No Results</p>
               }
             </div>
           </div>
