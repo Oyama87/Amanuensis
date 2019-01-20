@@ -1,8 +1,7 @@
 // Modules to control application life and create native browser window
 process.env.GOOGLE_APPLICATION_CREDENTIALS='/Users/justin/Amanuensis/AmanuensisCredentials.json'
 const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron')
-// const fs = require('fs')
-// const audioConverter = require('electron-audio-conversion')
+const takeDictation = require('./noteTranscriber')
 const transcribe = require('./transcriber')
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -182,8 +181,11 @@ function createWindow () {
     console.log('in main.js:', language)
   })
   
-  // Open File
+  ipcMain.on('activate-dictation', () => {
+    takeDictation(mainWindow.webContents, language)
+  })
   
+  // Open File
   async function openFile() {
     // Opens file dialog looking for markdown
     const files = dialog.showOpenDialog(mainWindow, {
@@ -196,18 +198,11 @@ function createWindow () {
     if(!files) return
     
     const file = files[0]
-    // console.log(file)
-    // const songUrl = await audioConverter.createSongUri(file, 'audio/m4a')
-    // console.log(songUrl)
-    
-    // console.log(fileContent)
-    
-    // Send fileContent to renderer
     mainWindow.webContents.send('load-audio', file)
-    // console.log(transcribe(file))
-    /*mainWindow.webContents.send('load-transcript', */
     transcribe(file, mainWindow.webContents, language)
   }
+  
+  
   
   // {
   //   label: 'View',

@@ -2,6 +2,7 @@ import React, { Component } from 'react';
 import './App.css';
 // import Sound from 'react-sound'
 import Transcript from './Transcript';
+import Notes from './Notes'
 const { ipcRenderer } = window.require('electron')
 
 const audio = (source, ref) => React.createElement('audio', {src: source, ref, autoPlay: true, controls: true}, null)
@@ -13,9 +14,7 @@ class App extends Component {
     super()
     this.state = {
       audioPath: '',
-      // soundStatus: Sound.status.STOPPED,
-      // currentTime: 0,
-      // duration: 0,
+      notes: '',
       searchResults: [],
       transcript: '',
       words: {},
@@ -50,6 +49,12 @@ class App extends Component {
       })
     })
     
+    ipcRenderer.on('load-note', (event, notes) => {
+      this.setState({
+        notes
+      })
+    })
+    
     this.seekToTimeStamp = this.seekToTimeStamp.bind(this)
   }
   
@@ -65,10 +70,11 @@ class App extends Component {
   }
   
   seekToTimeStamp(timeStamp) {
-    // this.setState({
-    //   currentTime: timeStamp
-    // })
     this.audioElement.current.currentTime = timeStamp
+  }
+  
+  startNotes() {
+    ipcRenderer.send('activate-dictation')
   }
   
   render() {
@@ -76,23 +82,12 @@ class App extends Component {
       <div className="App">
         <header>
           {audio(this.state.audioPath, this.audioElement)}
-          {/* <audio controls autoPlay>
-            <source src={this.state.audioPath}/>
-            Audio source unsupported or missing.
-          </audio> */}
-          <div>
-            {/* <button onClick={()=> this.audio.play()}>
-              Play
-            </button>
-            <button onClick={()=> this.audio.pause()}>
-              Stop
-            </button> */}
-          </div>
           <div className='progress-bar-container'>
             <progress className='progress' value={50} max={100}></progress>
             <span className='marker'>1</span>
           </div>
           <p onClick={() => this.sendNewLanguage('ja-JP')}>Change to JP</p>
+          <p onClick={() => this.startNotes}>Start Note</p>
         </header>
         <hr />
         <div className='bottom-container'>
@@ -111,6 +106,7 @@ class App extends Component {
                 :
                 <p>No Results</p>
               }
+              <Notes notes={this.state.notes}/>
             </div>
           </div>
         </div>

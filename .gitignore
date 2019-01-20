@@ -24,3 +24,5 @@ yarn-error.log*
 
 # google credential file
 AmanuensisCredentials.json
+SampleRecording.wav
+JPSample.wav
