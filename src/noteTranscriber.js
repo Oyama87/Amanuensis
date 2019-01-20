@@ -45,11 +45,13 @@ module.exports = async function takeDictation(windowContents, language) {
     record
     .start({
       sampleRateHertz: SAMPLE_RATE,
-      threshold: 0,
+      // threshold: 0,
+      thresholdStart: 0,
+      thresholdEnd: 0,
       // Other options, see https://www.npmjs.com/package/node-record-lpcm16#options
       verbose: true,
       recordProgram: 'rec', // Try also "arecord" or "sox"
-      silence: '3.0',
+      silence: '6.0',
     })
     .on('error', console.error)
     // .on('end', () => console.log('******ENDED******'))
