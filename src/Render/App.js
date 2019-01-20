@@ -50,8 +50,10 @@ class App extends Component {
     })
     
     ipcRenderer.on('load-note', (event, notes) => {
-      this.setState({
-        notes
+      this.setState(prev => {
+        return {
+          notes
+        }
       })
     })
     
@@ -74,6 +76,7 @@ class App extends Component {
   }
   
   startNotes() {
+    console.log('Running startNotes()')
     ipcRenderer.send('activate-dictation')
   }
   
@@ -87,7 +90,7 @@ class App extends Component {
             <span className='marker'>1</span>
           </div>
           <p onClick={() => this.sendNewLanguage('ja-JP')}>Change to JP</p>
-          <p onClick={() => this.startNotes}>Start Note</p>
+          <p onClick={this.startNotes}>Start Note</p>
         </header>
         <hr />
         <div className='bottom-container'>

@@ -13,7 +13,7 @@ module.exports = async function takeDictation(windowContents, language) {
   const SAMPLE_RATE = 16000
   
   const config = {
-    enableWordTimeOffsets: true,
+    // enableWordTimeOffsets: true,
     enableAutomaticPunctuation: true,
     encoding: 'LINEAR16',
     sampleRateHertz: SAMPLE_RATE,
@@ -25,6 +25,8 @@ module.exports = async function takeDictation(windowContents, language) {
     interimResults: true
   }
   
+  const totalNote = []
+  
   try {
     // Stream the audio to the Google Cloud Speech API
     const recognizeStream = client
@@ -32,23 +34,25 @@ module.exports = async function takeDictation(windowContents, language) {
     .on('error', console.error)
     .on('data', data => {
       // console.log(data.results[0].alternatives[0].stability)
-      let ts 
-      if(data.results[0].stability > 0.75 || data.results[0].alternatives[0].confidence){
-        ts = data.results[0].alternatives[0].transcript
-        // console.log('sending transcript')
-        windowContents.send('load-note', ts)
+      console.log('got data')
+      let ts = data.results[0].alternatives[0].transcript 
+      if(data.results[0].stability > 0.90 || data.results[0].alternatives[0].confidence){
+        totalNote.push(ts)
+        console.log('sending note')
+        windowContents.send('load-note', totalNote.join(' '))
       }
     })
     record
     .start({
       sampleRateHertz: SAMPLE_RATE,
-      threshold: 0.5,
+      threshold: 0,
       // Other options, see https://www.npmjs.com/package/node-record-lpcm16#options
       verbose: true,
       recordProgram: 'rec', // Try also "arecord" or "sox"
-      silence: '5.0',
+      silence: '3.0',
     })
     .on('error', console.error)
+    // .on('end', () => console.log('******ENDED******'))
     .pipe(recognizeStream)
   }
   catch(err) {
