@@ -4,62 +4,83 @@ import './App.css';
 import Transcript from './Transcript';
 const { ipcRenderer } = window.require('electron')
 
-// audio.ontimeupdate = function() {
-  
-  // }
+const audio = (source, ref) => React.createElement('audio', {src: source, ref, autoPlay: true, controls: true}, null)
   
   
-  class App extends Component {
+class App extends Component {
     
-    constructor() {
-      super()
-      this.state={
-        // audioPath: '',
-        // soundStatus: Sound.status.STOPPED,
-        // currentTime: 0,
-        // duration: 0,
-        transcript: '',
-        words: {}
-      }
-      
-      ipcRenderer.on('load-transcript', (event, text) => {
-        this.setState({
-          transcript: text
-        })
+  constructor() {
+    super()
+    this.state = {
+      audioPath: '',
+      // soundStatus: Sound.status.STOPPED,
+      // currentTime: 0,
+      // duration: 0,
+      searchResults: [],
+      transcript: '',
+      words: {}
+    }
+    this.audioElement = React.createRef()
+    // this.audio = document.createElement('audio')
+    // this.audio.autoplay = true
+    // this.audio = audio(this.state.audioPath)
+    
+    ipcRenderer.on('load-transcript', (event, text) => {
+      this.setState({
+        transcript: text
       })
-      
-      ipcRenderer.on('load-words', (event, words) => {
-        console.log('words', words)
-        this.setState({
-          words
-        })
+    })
+    
+    ipcRenderer.on('load-words', (event, words) => {
+      console.log('words', words)
+      this.setState({
+        words
       })
-      
-      this.audio = document.createElement('audio')
-      this.audio.autoplay = true
-      
-      ipcRenderer.on('load-audio', (event, payload) => {
-        console.log('load-audio callback')
-        this.audio.src = `file://${payload}`
-        this.audio.play()
-        // this.setState({
-        //   audioPath: payload,
-        //   soundStatus: Sound.status.STOPPED
-        // })
+    })
+    
+    ipcRenderer.on('load-audio', (event, payload) => {
+      console.log('load-audio callback')
+      // audio.src = `file://${payload}`
+      // audio.load()
+      // audio.play()
+      this.setState({
+        audioPath: `file://${payload}`,
       })
+    })
+    
+    this.seekToTimeStamp = this.seekToTimeStamp.bind(this)
+  }
+  
+  handleSearch = (evt) => {
+    evt.preventDefault()
+    this.setState({
+      searchResults: this.state.words[evt.target.search.value]
+    })
+  }
+  
+  seekToTimeStamp(timeStamp) {
+    // this.setState({
+    //   currentTime: timeStamp
+    // })
+    this.audioElement.current.currentTime = timeStamp
   }
   
   render() {
     return (
       <div className="App">
         <header>
+          {audio(this.state.audioPath, this.audioElement)}
+          {/* <audio controls autoPlay>
+            <source src={this.state.audioPath}/>
+            Audio source unsupported or missing.
+          </audio> */}
           <div>
-            <button onClick={()=> this.audio.play()}>
+            {/* <button onClick={()=> this.audio.play()}>
               Play
             </button>
             <button onClick={()=> this.audio.pause()}>
               Stop
-            </button>
+            </button> */}
           </div>
           <div className='progress-bar-container'>
             <progress className='progress' value={50} max={100}></progress>
@@ -71,17 +92,21 @@ const { ipcRenderer } = window.require('electron')
         <div className='bottom-container'>
           <Transcript transcriptText={this.state.transcript} />
           <div className='annotations'>
-            <form onSubmit={(evt) => {
-              evt.preventDefault()
-              console.log(this.state.words[evt.target.search.value].join(', '))
-            }}>
+            <form onSubmit={this.handleSearch.bind(this)}>
               <label htmlFor='search'>Search Keyword</label>
               <input id='search' name='search' type='text' />
             </form>
+            <div>
+              {
+                this.state.searchResults.map(timestamp => {
+                  return <p onClick={() => this.seekToTimeStamp(timestamp)}>{`00:${timestamp}`}</p>
+                })
+              }
+            </div>
           </div>
         </div>
       </div>
-    );
+    )
   }
 }
 
@@ -107,7 +132,7 @@ Learn React
 This is not supported
 </audio> */
 
-{/* <Sound 
+/* <Sound 
   url={`file://${this.state.audioPath}`}
   playStatus={this.state.soundStatus}
   onLoad={audio => {
@@ -127,4 +152,4 @@ This is not supported
   })}
   playFromPosition={0}
   onFinishedPlaying={()=>{}}
-/> */}
+/> */
