@@ -1,10 +1,11 @@
 {
-  "name": "notetalker",
+  "name": "Amanuensis",
   "version": "0.1.0",
   "private": true,
   "dependencies": {
     "@google-cloud/speech": "^2.2.0",
     "electron": "^4.0.1",
+    "node-record-lpcm16": "^0.3.1",
     "react": "^16.7.0",
     "react-dom": "^16.7.0",
     "react-scripts": "2.1.3",
