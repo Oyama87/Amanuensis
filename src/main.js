@@ -1,6 +1,7 @@
 // Modules to control application life and create native browser window
+process.env.GOOGLE_APPLICATION_CREDENTIALS='/Users/justin/Amanuensis/AmanuensisCredentials.json'
 const { app, BrowserWindow, Menu, dialog } = require('electron')
-const fs = require('fs')
+// const fs = require('fs')
 // const audioConverter = require('electron-audio-conversion')
 const transcribe = require('./transcriber')
 // Keep a global reference of the window object, if you don't, the window will
