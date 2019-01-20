@@ -16,7 +16,8 @@
     "build": "react-scripts build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
-    "electron": "electron ."
+    "electron": "npm run setEnv && electron .",
+    "setEnv": "export GOOGLE_APPLICATION_CREDENTIALS=AmanuensisCredentials.json"
   },
   "eslintConfig": {
     "extends": "react-app"
