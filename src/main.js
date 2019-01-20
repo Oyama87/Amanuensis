@@ -1,6 +1,6 @@
 // Modules to control application life and create native browser window
 process.env.GOOGLE_APPLICATION_CREDENTIALS='/Users/justin/Amanuensis/AmanuensisCredentials.json'
-const { app, BrowserWindow, Menu, dialog } = require('electron')
+const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron')
 // const fs = require('fs')
 // const audioConverter = require('electron-audio-conversion')
 const transcribe = require('./transcriber')
@@ -176,7 +176,11 @@ function createWindow () {
   
   // In this file you can include the rest of your app's specific main process
   // code. You can also put them in separate files and require them here.
-  
+  let language = 'en-US'
+  ipcMain.on('change-language', (evt, newLanguage) => {
+    language = newLanguage
+    console.log('in main.js:', language)
+  })
   
   // Open File
   
@@ -202,7 +206,7 @@ function createWindow () {
     mainWindow.webContents.send('load-audio', file)
     // console.log(transcribe(file))
     /*mainWindow.webContents.send('load-transcript', */
-    transcribe(file, mainWindow.webContents)
+    transcribe(file, mainWindow.webContents, language)
   }
   
   // {
