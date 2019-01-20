@@ -10,10 +10,12 @@ header {
   align-items: center;
   height: 30%;
   width: 100%;
+  min-height: 140px;
 }
 
 .progress-bar-container {
   position: relative;
+  top: 10%;
 }
 
 
