@@ -1,16 +1,15 @@
 import React, { Component } from 'react';
 import './App.css';
-// import Sound from 'react-sound'
 import Transcript from './Transcript';
 import Notes from './Notes'
+import SplashScreen from './SplashScreen'
 import AceEditor from 'react-ace'
-import Markdown from 'markdown-to-jsx'
 import brace from 'brace'
 import 'brace/mode/markdown'
 import 'brace/theme/textmate'
 import 'brace/theme/xcode'
 import 'brace/theme/github'
-
+// const fs = window.require('fs')
 const { ipcRenderer } = window.require('electron')
 
 
@@ -22,6 +21,8 @@ class App extends Component {
   constructor() {
     super()
     this.state = {
+      projectTitle: '',
+      projectDir: '',
       audioPath: '',
       notes: '',
       searchResults: [],
@@ -34,6 +35,13 @@ class App extends Component {
     // this.audio = document.createElement('audio')
     // this.audio.autoplay = true
     // this.audio = audio(this.state.audioPath)
+    
+    ipcRenderer.on('load-project', (event, projectDir) => {
+      this.setState({
+        projectDir,
+        projectTitle: projectDir.slice(projectDir.lastIndexOf('/')+1)
+      })
+    })
     
     ipcRenderer.on('load-transcript', (event, text) => {
       this.setState({
@@ -76,6 +84,10 @@ class App extends Component {
     this.seekToTimeStamp = this.seekToTimeStamp.bind(this)
   }
   
+  createProject = () => {
+    ipcRenderer.send('create-project')
+  } 
+  
   sendNewLanguage(language) {
     ipcRenderer.send('change-language', language)
   }
@@ -112,25 +124,16 @@ class App extends Component {
     
   }
   
+  
+  
   render() {
-    return (
+    if(!this.state.projectDir) return <SplashScreen load={this.createProject} />
+    else return (
       <div className="App">
         <header>
           
           {audio(this.state.audioPath, this.audioElement)}
-          
-          <div className='progress-bar-container'>
-            <progress className='progress' value={100} max={100}></progress>
-            {this.audioElement.current ?
-              <span className='marker' style={{left: `${Math.floor(
-                Math.floor(this.state.currentTime/1000)/Math.floor(this.audioElement.current.duration)
-              )}%`}}>
-              1
-              </span>
-              :
-              null
-            }
-          </div>
+          <p>{this.state.projectTitle}</p>
           <p onClick={() => this.sendNewLanguage('ja-JP')}>Change to JP</p>
           <p onClick={() => this.sendNewLanguage('en-US')}>Change to EN</p>          
           <p onClick={this.startNotes.bind(this)}>Start Note</p>
@@ -152,6 +155,7 @@ class App extends Component {
               value={this.state.notes}
               onChange={notes => this.setState({notes})}
               height='200px'
+              width='300px'
             />
             <div>
               {
@@ -213,7 +217,6 @@ const getSurroundingText = function(node) {
     return <span>{`${wordObj.word} `}</span>
   })
 }
-
 
 
 /* <header className="App-header">

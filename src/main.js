@@ -4,6 +4,7 @@ const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron')
 const takeDictation = require('./noteTranscriber')
 const transcribe = require('./transcriber')
 // const record = require('node-record-lpcm16')
+const fs = require('fs')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
@@ -12,8 +13,8 @@ let mainWindow
 function createWindow () {
   // Create the browser window.
   mainWindow = new BrowserWindow({
-    width: 800, 
-    height: 600, 
+    width: 1200, 
+    height: 900, 
     webPreferences: {
       allowRunningInsecureContent: true,
        webSecurity: false
@@ -186,6 +187,28 @@ function createWindow () {
   ipcMain.on('activate-dictation', () => {
     takeDictation(mainWindow.webContents, language, ipcMain)
   })
+  
+  ipcMain.on('create-project', createProject)
+  
+  
+  // Create new project directory
+  async function createProject() {
+    const dirs = dialog.showOpenDialog(mainWindow, {
+      properties: ['openDirectory', 'createDirectory']
+    })
+    if(!dirs) return
+    const directory = dirs[0]
+    await fs.mkdir(`${directory}/Notes`, err => {
+      if(err) return console.log(err)
+    })
+    await fs.writeFile(`${directory}/transcript.txt`, '', err => {
+      if(err) return console.log(err)
+    })
+    await fs.writeFile(`${directory}/words.json`, '', err => {
+      if(err) return console.log(err)
+    })
+    mainWindow.webContents.send('load-project', directory)
+  }
   
   // Open File
   async function openFile() {
