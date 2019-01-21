@@ -9,7 +9,7 @@ import 'brace/mode/markdown'
 import 'brace/theme/textmate'
 import 'brace/theme/xcode'
 import 'brace/theme/github'
-// const fs = window.require('fs')
+const fs = window.require('fs')
 const { ipcRenderer } = window.require('electron')
 
 
@@ -24,22 +24,38 @@ class App extends Component {
       projectTitle: '',
       projectDir: '',
       audioPath: '',
+      noteTitle: 'Jubilee',
       notes: '',
       searchResults: [],
       transcript: '',
       words: {},
       readyForSearch: false,
-      recording: false
+      recording: false,
+      language: 'English'
     }
     this.audioElement = React.createRef()
     // this.audio = document.createElement('audio')
     // this.audio.autoplay = true
     // this.audio = audio(this.state.audioPath)
     
-    ipcRenderer.on('load-project', (event, projectDir) => {
+    ipcRenderer.on('load-project', async (event, projectDir) => {
+      await fs.readFile(`${projectDir}/transcript.txt`, (err, data) => {
+        if(err) return console.log(err)
+        this.setState({transcript: data.toString()})
+      })
+      await fs.readFile(`${projectDir}/words.json`, (err, data) => {
+        if(err) return console.log(err)
+        let dataString = data.toString()
+        if(dataString) {
+          this.setState({
+            words: JSON.parse(dataString),
+            readyForSearch: true
+          })
+        }
+      })
       this.setState({
         projectDir,
-        projectTitle: projectDir.slice(projectDir.lastIndexOf('/')+1)
+        projectTitle: projectDir.slice(projectDir.lastIndexOf('/')+1),
       })
     })
     
@@ -51,6 +67,12 @@ class App extends Component {
     
     ipcRenderer.on('load-words', (event, words) => {
       console.log('words:', words)
+      fs.writeFile(`${this.state.projectDir}/transcript.txt`, this.state.transcript, err => {
+        if(err) return console.log(err)
+      })
+      fs.writeFile(`${this.state.projectDir}/words.json`, JSON.stringify(words), err => {
+        if(err) return console.log(err)
+      })
       this.setState({
         words,
         readyForSearch: true
@@ -88,8 +110,25 @@ class App extends Component {
     ipcRenderer.send('create-project')
   } 
   
+  loadProject = () => {
+    ipcRenderer.send('get-project')
+  }
+  
   sendNewLanguage(language) {
     ipcRenderer.send('change-language', language)
+    let languageName
+    switch(language) {
+      case 'en-US':
+        languageName = 'English'
+        break
+      case 'ja-JP':
+        languageName = 'Japanese'
+        break
+      default: language = 'English'
+    }
+    this.setState({
+      language: languageName
+    })
   }
   
   handleSearch = (evt) => {
@@ -97,6 +136,7 @@ class App extends Component {
     this.setState({
       searchResults: this.state.words[evt.target.search.value.toUpperCase()]
     })
+    evt.target.search.value = ''
   }
   
   seekToTimeStamp(timeStamp) {
@@ -118,24 +158,30 @@ class App extends Component {
   stopNotes() {
     console.log('Stopping notes')
     ipcRenderer.send('cancel-dictation')
-    // this.setState({
-    //   recording: false
-    // })
-    
   }
   
-  
+  saveNote = () => {
+    fs.writeFile(`${this.state.projectDir}/Notes/${this.state.noteTitle}.md`, 
+    this.state.notes,
+    err => {
+      if(err) return console.log(err)
+    })
+  }
   
   render() {
-    if(!this.state.projectDir) return <SplashScreen load={this.createProject} />
+    if(!this.state.projectDir) return <SplashScreen create={this.createProject} load={this.loadProject} />
     else return (
       <div className="App">
         <header>
-          
-          {audio(this.state.audioPath, this.audioElement)}
-          <p>{this.state.projectTitle}</p>
-          <p onClick={() => this.sendNewLanguage('ja-JP')}>Change to JP</p>
-          <p onClick={() => this.sendNewLanguage('en-US')}>Change to EN</p>          
+          <div className='player-controller'>
+            <p className='project-title'>{this.state.projectTitle}</p>
+            {audio(this.state.audioPath, this.audioElement)}
+          </div>
+          <div className='language-container'>
+          <p>Current Language: {this.state.language}</p>
+            <p onClick={() => this.sendNewLanguage('ja-JP')}>Change to JP</p>
+            <p onClick={() => this.sendNewLanguage('en-US')}>Change to EN</p>          
+          </div>
           <p onClick={this.startNotes.bind(this)}>Start Note</p>
           <div style={{height: '20px', width: '20px', borderRadius: '20px', backgroundColor: this.state.recording ? 'grey' : 'red'}}></div>
           <p onClick={this.stopNotes.bind(this)}>Stop Note</p>
@@ -149,6 +195,7 @@ class App extends Component {
               <label htmlFor='search'>Search Keyword</label>
               <input id='search' name='search' type='text' />
             </form>
+            <button onClick={this.saveNote}>Save Note</button>
             <AceEditor 
               mode='markdown'
               theme='textmate'
@@ -156,6 +203,9 @@ class App extends Component {
               onChange={notes => this.setState({notes})}
               height='200px'
               width='300px'
+              showGutter={false}
+              wrapEnabled={true}
+              fontSize={16}
             />
             <div>
               {
@@ -217,46 +267,3 @@ const getSurroundingText = function(node) {
     return <span>{`${wordObj.word} `}</span>
   })
 }
-
-
-/* <header className="App-header">
-<img src={logo} className="App-logo" alt="logo" />
-<p>
-Edit <code>src/App.js</code> and save to reload.
-</p>
-<a
-className="App-link"
-href="https://reactjs.org"
-target="_blank"
-rel="noopener noreferrer"
->
-Learn React
-</a>
-</header> */
-
-/* <audio ref='audio_tag' id='audio' controls >
-<source src={song} type='audio/mp4'/>
-This is not supported
-</audio> */
-
-/* <Sound 
-  url={`file://${this.state.audioPath}`}
-  playStatus={this.state.soundStatus}
-  onLoad={audio => {
-    if(audio.loaded) {
-      this.setState({
-        soundStatus: Sound.status.PLAYING
-      })
-    }
-  }}
-  onPlaying={audio => this.setState((prev)=> {
-    if(Math.floor(audio.position/1000) === prev.currentTime)
-    return prev
-    else return {
-      currentTime: Math.floor(audio.position/1000),
-      duration: audio.duration/1000
-    }
-  })}
-  playFromPosition={0}
-  onFinishedPlaying={()=>{}}
-/> */

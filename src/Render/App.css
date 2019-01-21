@@ -5,26 +5,33 @@
 
 header {
   display: flex;
-  /* flex-direction: column; */
-  justify-content: space-around;
+  justify-content: space-evenly;
   align-items: center;
   height: 30%;
   width: 100%;
   min-height: 140px;
 }
 
-.progress-bar-container {
-  position: relative;
-  top: 10%;
+.player-controller {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  width: 20%;
+  height: 100%;
 }
 
-.progress {
-  width: 500px;
+.project-title {
+  font-size: 2em;
+  margin: 0
 }
 
-/* progress[value]::-webkit-progress-value {
-  background-image: linear-gradient(to bottom, red, white );
-} */
+.language-container {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+}
 
 .marker {
   position: absolute;

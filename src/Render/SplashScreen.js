@@ -8,8 +8,8 @@ export default props => {
       <img src={logo} alt='app icon' className='icon'/>
       <h1>Amanuensis</h1>
       <div className='splash-btn-container'>
-        <button className='splash-button' onClick={props.load}>New Project</button>
-        <button className='splash-button'>Open Project</button>
+        <button className='splash-button' onClick={props.create}>New Project</button>
+        <button className='splash-button' onClick={props.load}>Open Project</button>
       </div>
       <div>Icons made by Freepik from www.flaticon.com are licensed by CC 3.0 BY</div>
     </div>

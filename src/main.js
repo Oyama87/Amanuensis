@@ -188,8 +188,17 @@ function createWindow () {
     takeDictation(mainWindow.webContents, language, ipcMain)
   })
   
+  ipcMain.on('get-project', loadExistingProject)
   ipcMain.on('create-project', createProject)
   
+  function loadExistingProject() {
+    const dirs = dialog.showOpenDialog(mainWindow, {
+      properties: ['openDirectory']
+    })
+    if(!dirs) return
+    const directory = dirs[0]
+    mainWindow.webContents.send('load-project', directory)
+  }
   
   // Create new project directory
   async function createProject() {
