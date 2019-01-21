@@ -88,6 +88,7 @@ class App extends Component {
     this.setState({
       recording: true
     })
+    console.log(this.audioElement.current.currentTime)
   }
   
   stopNotes() {
