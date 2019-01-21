@@ -109,7 +109,7 @@ class App extends Component {
             <span className='marker'>1</span>
           </div>
           <p onClick={() => this.sendNewLanguage('ja-JP')}>Change to JP</p>
-          <p onClick={this.startNotes}>Start Note</p>
+          <p onClick={this.startNotes.bind(this)}>Start Note</p>
           <p onClick={this.stopNotes}>Stop Note</p>
         </header>
         <hr />
