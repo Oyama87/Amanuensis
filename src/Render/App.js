@@ -116,6 +116,7 @@ class App extends Component {
           <Transcript transcriptText={this.state.transcript} />
           <div className='annotations'>
             <form onSubmit={this.handleSearch.bind(this)}>
+            <div style={{height: '20px', width: '20px', borderRadius: '20px', backgroundColor: this.state.readyForSearch ? 'green' : 'red'}}></div>
               <label htmlFor='search'>Search Keyword</label>
               <input id='search' name='search' type='text' />
             </form>
@@ -125,7 +126,7 @@ class App extends Component {
                 this.state.searchResults.map(wordObj => {
                   return (
                     <p onClick={this.seekToTimeStamp(wordObj.startTime.seconds)}>
-                      {`00:${wordObj.startTime.seconds} -- `} ...{getSurroundingText(wordObj)}...
+                      {`00:${wordObj.startTime.seconds} -- `} ...{getSurroundingText(wordObj)}{'\b'}...
                     </p>
                   )
                 })
