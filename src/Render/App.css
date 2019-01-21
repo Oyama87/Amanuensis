@@ -5,8 +5,8 @@
 
 header {
   display: flex;
-  flex-direction: column;
-  justify-content: center;
+  /* flex-direction: column; */
+  justify-content: space-around;
   align-items: center;
   height: 30%;
   width: 100%;
@@ -18,10 +18,13 @@ header {
   top: 10%;
 }
 
-
 .progress {
-  width: 500px; 
+  width: 500px;
 }
+
+/* progress[value]::-webkit-progress-value {
+  background-image: linear-gradient(to bottom, red, white );
+} */
 
 .marker {
   position: absolute;

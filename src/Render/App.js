@@ -94,23 +94,28 @@ class App extends Component {
   stopNotes() {
     console.log('Stopping notes')
     ipcRenderer.send('cancel-dictation')
+    // this.setState({
+    //   recording: false
+    // })
+    
   }
   
-  seekSearchResult = (timestamp) => {
-    this.seekToTimeStamp(timestamp)
-  }
   render() {
     return (
       <div className="App">
         <header>
+          
           {audio(this.state.audioPath, this.audioElement)}
+          
           <div className='progress-bar-container'>
-            <progress className='progress' value={50} max={100}></progress>
+            <progress className='progress' value={100} max={100}></progress>
             <span className='marker'>1</span>
           </div>
           <p onClick={() => this.sendNewLanguage('ja-JP')}>Change to JP</p>
+          <p onClick={() => this.sendNewLanguage('en-US')}>Change to EN</p>          
           <p onClick={this.startNotes.bind(this)}>Start Note</p>
-          <p onClick={this.stopNotes}>Stop Note</p>
+          <div style={{height: '20px', width: '20px', borderRadius: '20px', backgroundColor: this.state.recording ? 'grey' : 'red'}}></div>
+          <p onClick={this.stopNotes.bind(this)}>Stop Note</p>
         </header>
         <hr />
         <div className='bottom-container'>
@@ -126,8 +131,8 @@ class App extends Component {
                 this.state.searchResults ?
                 this.state.searchResults.map(wordObj => {
                   return (
-                    <p onClick={this.seekToTimeStamp(wordObj.startTime.seconds)}>
-                      {`00:${wordObj.startTime.seconds} -- `} ...{getSurroundingText(wordObj)}{'\b'}...
+                    <p onClick={() => this.seekToTimeStamp(wordObj.startTime.seconds)}>
+                      {`00:${wordObj.startTime.seconds} -- `}...{getSurroundingText(wordObj)}...
                     </p>
                   )
                 })
