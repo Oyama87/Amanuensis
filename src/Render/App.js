@@ -3,7 +3,16 @@ import './App.css';
 // import Sound from 'react-sound'
 import Transcript from './Transcript';
 import Notes from './Notes'
+import AceEditor from 'react-ace'
+import Markdown from 'markdown-to-jsx'
+import brace from 'brace'
+import 'brace/mode/markdown'
+import 'brace/theme/textmate'
+import 'brace/theme/xcode'
+import 'brace/theme/github'
+
 const { ipcRenderer } = window.require('electron')
+
 
 const audio = (source, ref) => React.createElement('audio', {src: source, ref, autoPlay: true, controls: true}, null)
   
@@ -80,6 +89,9 @@ class App extends Component {
   
   seekToTimeStamp(timeStamp) {
     this.audioElement.current.currentTime = timeStamp
+    this.setState({
+      currentTime: timeStamp
+    })
   }
   
   startNotes() {
@@ -109,7 +121,15 @@ class App extends Component {
           
           <div className='progress-bar-container'>
             <progress className='progress' value={100} max={100}></progress>
-            <span className='marker'>1</span>
+            {this.audioElement.current ?
+              <span className='marker' style={{left: `${Math.floor(
+                Math.floor(this.state.currentTime/1000)/Math.floor(this.audioElement.current.duration)
+              )}%`}}>
+              1
+              </span>
+              :
+              null
+            }
           </div>
           <p onClick={() => this.sendNewLanguage('ja-JP')}>Change to JP</p>
           <p onClick={() => this.sendNewLanguage('en-US')}>Change to EN</p>          
@@ -126,6 +146,13 @@ class App extends Component {
               <label htmlFor='search'>Search Keyword</label>
               <input id='search' name='search' type='text' />
             </form>
+            <AceEditor 
+              mode='markdown'
+              theme='textmate'
+              value={this.state.notes}
+              onChange={notes => this.setState({notes})}
+              height='200px'
+            />
             <div>
               {
                 this.state.searchResults ?
