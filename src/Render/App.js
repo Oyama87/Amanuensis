@@ -18,7 +18,8 @@ class App extends Component {
       searchResults: [],
       transcript: '',
       words: {},
-      readyForSearch: false
+      readyForSearch: false,
+      recording: false
     }
     this.audioElement = React.createRef()
     // this.audio = document.createElement('audio')
@@ -57,6 +58,12 @@ class App extends Component {
       })
     })
     
+    ipcRenderer.on('stopped-note', () => {
+      this.setState({
+        recording: false
+      })
+    })
+    
     this.seekToTimeStamp = this.seekToTimeStamp.bind(this)
   }
   
@@ -78,6 +85,14 @@ class App extends Component {
   startNotes() {
     console.log('Running startNotes()')
     ipcRenderer.send('activate-dictation')
+    this.setState({
+      recording: true
+    })
+  }
+  
+  stopNotes() {
+    console.log('Stopping notes')
+    ipcRenderer.send('cancel-dictation')
   }
   
   seekSearchResult = (timestamp) => {
@@ -94,6 +109,7 @@ class App extends Component {
           </div>
           <p onClick={() => this.sendNewLanguage('ja-JP')}>Change to JP</p>
           <p onClick={this.startNotes}>Start Note</p>
+          <p onClick={this.stopNotes}>Stop Note</p>
         </header>
         <hr />
         <div className='bottom-container'>

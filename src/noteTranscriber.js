@@ -2,9 +2,10 @@ const speech = require('@google-cloud/speech')
 // const fs = require('fs')
 // const path = require('path')
 const record = require('node-record-lpcm16')
+// const { ipcMain } = 'electron'
 
 
-module.exports = async function takeDictation(windowContents, language) {
+module.exports = async function takeDictation(windowContents, language, ipc) {
   const client = new speech.SpeechClient()
   
   console.log('in takeDictation.js:', language)
@@ -42,9 +43,11 @@ module.exports = async function takeDictation(windowContents, language) {
         windowContents.send('load-note', totalNote.join(' '))
       }
     })
+    
+    // Goes Here
     record
     .start({
-      sampleRateHertz: SAMPLE_RATE,
+      sampleRateHertz: 16000,
       // threshold: 0,
       thresholdStart: 0,
       thresholdEnd: 0,
@@ -53,11 +56,22 @@ module.exports = async function takeDictation(windowContents, language) {
       silence: '6.0',
     })
     .on('error', console.error)
-    // .on('end', () => console.log('******ENDED******'))
+    .on('end', () => {
+      console.log('******ENDED******')
+      windowContents.send('stopped-note')
+    })
     .pipe(noteTranscriber)
+    
+    
+    ipc.on('cancel-dictation', () => {
+      console.log('trying to stop recording')
+      record.stop()
+    })
+      
   }
   catch(err) {
     console.error(err)
   }
+  
 }
 
