@@ -3,7 +3,7 @@ process.env.GOOGLE_APPLICATION_CREDENTIALS='/Users/justin/Amanuensis/AmanuensisC
 const { app, BrowserWindow, Menu, dialog, ipcMain } = require('electron')
 const takeDictation = require('./noteTranscriber')
 const transcribe = require('./transcriber')
-const record = require('node-record-lpcm16')
+// const record = require('node-record-lpcm16')
 
 // Keep a global reference of the window object, if you don't, the window will
 // be closed automatically when the JavaScript object is garbage collected.
