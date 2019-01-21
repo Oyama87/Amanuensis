@@ -37,30 +37,21 @@ module.exports = async function transcribe(filePath, windowContents, language) {
     .on('data', data => {
       // console.log(data.results[0].alternatives[0].stability)
       let ts 
-      if(data.results[0].stability > 0.75 || data.results[0].alternatives[0].confidence){
+      if(data.results[0].stability > 0.85 || data.results[0].alternatives[0].confidence){
         ts = data.results[0].alternatives[0].transcript
         // console.log('sending transcript')
         windowContents.send('load-transcript', ts)
         if(data.results[0].alternatives[0].words.length > 0) {
           console.log('sending words')
           let wordsArray = data.results[0].alternatives[0].words
-          let hashTable = {}
-          wordsArray.forEach(wordObj => {
-            if(hashTable.hasOwnProperty(wordObj.word.toUpperCase())) {
-              hashTable[wordObj.word.toUpperCase()].push(wordObj.startTime.seconds)
-            }
-            else {
-              hashTable[wordObj.word.toUpperCase()] = [wordObj.startTime.seconds]
-            }
-          })
-          windowContents.send('load-words', hashTable)
+          let wordLookup = {}
+          linkNodes(wordsArray, wordLookup)
+          console.log('after next:', wordLookup)
+          // linkNodes(wordsArray, wordLookup, 'prev')
+          // console.log('after prev:', wordLookup)
+          windowContents.send('load-words', wordLookup)
         }
       }
-      // console.log(ts)
-      // console.log(windowContentsContents.send)
-      // console.log(data.results[0].alternatives[0].words)
-      
-      // console.log(`Transcription: ${data.results[0].alternatives[0].transcript}`)
     })
 
     // Stream an audio file from disk to the Speech API, e.g. "./resources/audio.raw"
@@ -71,6 +62,20 @@ module.exports = async function transcribe(filePath, windowContents, language) {
     console.error(err)
   }
 }
+
+function linkNodes(wordsArray, wordLookup) {
+  wordsArray.forEach((wordObj, i) => {
+    wordObj.prev = wordsArray[i-1]||null
+    wordObj.next = wordsArray[i+1]||null
+    if(wordLookup.hasOwnProperty(wordObj.word.toUpperCase())) {
+      wordLookup[wordObj.word.toUpperCase()].push(wordObj)
+    }
+    else {
+      wordLookup[wordObj.word.toUpperCase()] = [wordObj]
+    }
+  })
+}
+
 
 // transcribe(request)
 

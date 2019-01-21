@@ -32,7 +32,7 @@ class App extends Component {
     })
     
     ipcRenderer.on('load-words', (event, words) => {
-      console.log('words', words)
+      console.log('words:', words)
       this.setState({
         words,
         readyForSearch: true
@@ -80,6 +80,9 @@ class App extends Component {
     ipcRenderer.send('activate-dictation')
   }
   
+  seekSearchResult = (timestamp) => {
+    this.seekToTimeStamp(timestamp)
+  }
   render() {
     return (
       <div className="App">
@@ -103,8 +106,12 @@ class App extends Component {
             <div>
               {
                 this.state.searchResults ?
-                this.state.searchResults.map(timestamp => {
-                  return <p onClick={() => this.seekToTimeStamp(timestamp)}>{`00:${timestamp}`}</p>
+                this.state.searchResults.map(wordObj => {
+                  return (
+                    <p onClick={this.seekToTimeStamp(wordObj.startTime.seconds)}>
+                      {`00:${wordObj.startTime.seconds} -- `} ...{getSurroundingText(wordObj)}...
+                    </p>
+                  )
                 })
                 :
                 <p>No Results</p>
@@ -119,6 +126,45 @@ class App extends Component {
 }
 
 export default App;
+
+/* 
+  function takes in a node and and gets three nodes before it as well as
+  three nodes after it, handling head and tail cases. returns an array of 
+  <spans> with the original word bolded or emphasized in some way.
+*/
+
+const getSurroundingText = function(node) {
+  const prevNodes = []
+  const nextNodes = []
+  let prev = node.prev
+  // console.log(prev)
+  let next = node.next
+  // console.log(next)
+  for(let i = 0; i < 3; i++) {
+    if(prev) {
+      prevNodes.unshift(prev)
+      prev = prev.prev
+    }
+    else break
+  }
+  for(let i = 0; i < 3; i++) {
+    if(next) {
+      nextNodes.push(next)
+      next = next.next
+    }
+    else break
+  }
+  // console.log('prevNodes:', prevNodes)
+  // console.log('nextNodes:', nextNodes)
+  let interimArray = [...prevNodes, node, ...nextNodes]
+  console.log('interimArray:', interimArray)
+  return interimArray.map(wordObj => {
+    if(wordObj.word === node.word) return <strong>{`${node.word} `}</strong>
+    return <span>{`${wordObj.word} `}</span>
+  })
+}
+
+
 
 /* <header className="App-header">
 <img src={logo} className="App-logo" alt="logo" />

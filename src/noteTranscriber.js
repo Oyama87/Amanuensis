@@ -29,7 +29,7 @@ module.exports = async function takeDictation(windowContents, language) {
   
   try {
     // Stream the audio to the Google Cloud Speech API
-    const recognizeStream = client
+    const noteTranscriber = client
     .streamingRecognize(request)
     .on('error', console.error)
     .on('data', data => {
@@ -48,14 +48,13 @@ module.exports = async function takeDictation(windowContents, language) {
       // threshold: 0,
       thresholdStart: 0,
       thresholdEnd: 0,
-      // Other options, see https://www.npmjs.com/package/node-record-lpcm16#options
       verbose: true,
-      recordProgram: 'rec', // Try also "arecord" or "sox"
+      recordProgram: 'rec',
       silence: '6.0',
     })
     .on('error', console.error)
     // .on('end', () => console.log('******ENDED******'))
-    .pipe(recognizeStream)
+    .pipe(noteTranscriber)
   }
   catch(err) {
     console.error(err)
