@@ -43,5 +43,6 @@
   outline: none !important;
   color: white;
   box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
-  text-shadow: 5px 5px 5px rgba(0,0,0,0.3)
+  text-shadow: 5px 5px 5px rgba(0,0,0,0.3);
+  cursor: pointer;
 }

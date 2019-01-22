@@ -1,6 +1,6 @@
 import React, { Component } from 'react'
 // const { ipcRenderer } = window.require('electron')
-import './App.css'
+import './styles/App.css'
 
 export default class Transcript extends Component {
   
