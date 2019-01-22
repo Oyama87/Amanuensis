@@ -12,7 +12,7 @@ import './styles/NoteControlStyles.css'
 
 export default props => {
   return (
-    <div className='top-half'>
+    <div className='note-control-container'>
       <div className='top-bar'>
         {
           !props.recording ?
@@ -38,7 +38,7 @@ export default props => {
           showGutter={false}
           wrapEnabled={true}
           fontSize={16}
-          style={{flexBasis: '45%'}}
+          style={{flex: 1, height: '100%'}}
         />
         <Notes notes={props.notes} />
       </div>

@@ -192,19 +192,18 @@ class App extends Component {
         </div>
           
         <div className='right-half'>
-          <div className='note-control-container'>
+            
             <NoteControls 
               notes={this.state.notes}
               recording={this.state.recording}
               updateNotes={this.updateNotes}
             />
-          </div>
           
           <div className='search-container'>
             <form onSubmit={this.handleSearch.bind(this)}>
               {/* Search Icon */}
               <label htmlFor='search'>Search Keyword</label>
-              <input id='search' name='search' type='text' />
+              <input id='search' name='search' type='text' style={{outline: 'none'}}/>
             </form>
           </div>
           

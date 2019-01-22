@@ -8,8 +8,8 @@
   /* height: 100%;*/
 }
 
-.top-half {
-  height: 100%;  
+.note-control-container {
+  flex: 6;
 }
 
 .top-bar {
@@ -18,10 +18,10 @@
 }
 
 .note-markdown {
-  font-size: 1em;
+  font-size: 1.1em;
   margin: 0;
-  flex-basis: 45%;
-  max-height: 100%;
+  flex: 1;
+  height: 100%;
   border: 1px solid black;
   overflow: scroll;
 }
