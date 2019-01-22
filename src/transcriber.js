@@ -18,9 +18,9 @@ module.exports = async function transcribe(filePath, windowContents, language) {
   
   const config = {
     enableWordTimeOffsets: true,
-    enableAutomaticPunctuation: true,
+    // enableAutomaticPunctuation: true,
     encoding: 'LINEAR16',
-    sampleRateHertz: 16000,
+    // sampleRateHertz: 16000,
     languageCode: language,
   }
   
