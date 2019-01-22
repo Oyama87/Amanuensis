@@ -19,6 +19,7 @@
 .splash-container h1 {
   font-size: 6em;
   font-weight: bold;
+  text-shadow: 5px 5px 5px rgba(0,0,0,0.3)
 }
 
 .splash-btn-container {
@@ -37,4 +38,6 @@
   border-radius: 100px;
   outline: none !important;
   color: white;
+  box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
+  text-shadow: 5px 5px 5px rgba(0,0,0,0.3)
 }
