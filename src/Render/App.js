@@ -3,6 +3,8 @@ import './styles/App.css'
 import Transcript from './Transcript';
 import SplashScreen from './SplashScreen'
 import NoteControls from './NoteControls';
+import greenGlass from '../magnifierGreen.svg'
+import redGlass from '../magnifierRed.svg'
 const fs = window.require('fs')
 const { ipcRenderer } = window.require('electron')
 
@@ -15,6 +17,7 @@ class App extends Component {
   constructor() {
     super()
     this.state = {
+      takingNotes: false,
       projectTitle: '',
       projectDir: '',
       audioPath: '',
@@ -25,7 +28,9 @@ class App extends Component {
       words: {},
       readyForSearch: false,
       recording: false,
-      language: 'English'
+      language: 'English',
+      currentAudioTime: 0,
+      allNotes: []
     }
     this.audioElement = React.createRef()
     // this.audio = document.createElement('audio')
@@ -140,18 +145,21 @@ class App extends Component {
     })
   }
   
-  startNotes() {
+  startNotes = () => {
     console.log('Running startNotes()')
     ipcRenderer.send('activate-dictation')
     this.setState({
-      recording: true
+      recording: true,
     })
     console.log(this.audioElement.current.currentTime)
   }
   
-  stopNotes() {
+  stopNotes = () => {
     console.log('Stopping notes')
     ipcRenderer.send('cancel-dictation')
+    this.setState({
+      recording: false
+    })
   }
   
   saveNote = () => {
@@ -162,9 +170,32 @@ class App extends Component {
     })
   }
   
+  storeNote = () => {
+    this.setState(prev => {
+      return {
+        allNotes: [...prev.allNotes, {text: prev.notes, timestamp: prev.currentAudioTime}],
+        notes: '',
+        currentAudioTime: 0
+      }
+    })
+  }
+  
   updateNotes = (notes) => {
     this.setState({
       notes
+    })
+  }
+  
+  openNote = () => {
+    this.setState({
+      takingNotes: true,
+      currentAudioTime: this.audioElement.current.currentTime
+    })
+  }
+  
+  cancelNote = () => {
+    this.setState({
+      takingNotes: false
     })
   }
   
@@ -195,15 +226,28 @@ class App extends Component {
             
             <NoteControls 
               notes={this.state.notes}
+              openNote={this.openNote}
+              cancelNote={this.cancelNote}
               recording={this.state.recording}
+              storeNote={this.storeNote}
+              startNotes={this.startNotes}
+              stopNotes={this.stopNotes}
+              takingNotes={this.state.takingNotes}
               updateNotes={this.updateNotes}
+              audioTime={this.state.currentAudioTime}
+              allNotes={this.state.allNotes}
             />
           
           <div className='search-container'>
             <form onSubmit={this.handleSearch.bind(this)}>
-              {/* Search Icon */}
-              <label htmlFor='search'>Search Keyword</label>
-              <input id='search' name='search' type='text' style={{outline: 'none'}}/>
+              {
+                this.state.readyForSearch ? 
+                  <img src={greenGlass} style={{height: '18px'}} alt='green glass' /> 
+                  :
+                  <img src={redGlass} style={{height: '18px', width: '2em'}} alt='red glass' /> 
+              }
+              <label htmlFor='search' style={{margin: '0 10px', fontSize: '18px', textShadow: '1px 1px 1px rgba(0,0,0,0.3)'}}>Search Keyword</label>
+              <input id='search' name='search' type='text' style={{outline: 'none', fontSize: '14px'}}/>
             </form>
           </div>
           
@@ -212,8 +256,8 @@ class App extends Component {
               this.state.searchResults ?
               this.state.searchResults.map(wordObj => {
                 return (
-                  <p onClick={() => this.seekToTimeStamp(wordObj.startTime.seconds)}>
-                    {`00:${wordObj.startTime.seconds} -- `}...{getSurroundingText(wordObj)}...
+                  <p className='search-item' onClick={() => this.seekToTimeStamp(wordObj.startTime.seconds)}>
+                    {`00:${wordObj.startTime.seconds} -- `}... {getSurroundingText(wordObj)}...
                   </p>
                 )
               })
@@ -261,7 +305,7 @@ const getSurroundingText = function(node) {
   let interimArray = [...prevNodes, node, ...nextNodes]
   console.log('interimArray:', interimArray)
   return interimArray.map(wordObj => {
-    if(wordObj.word === node.word) return <strong>{`${node.word} `}</strong>
+    if(wordObj.word === node.word) return <strong className='word-match'>{`${node.word} `}</strong>
     return <span>{`${wordObj.word} `}</span>
   })
 }

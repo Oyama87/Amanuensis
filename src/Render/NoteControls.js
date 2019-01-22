@@ -15,17 +15,28 @@ export default props => {
     <div className='note-control-container'>
       <div className='top-bar'>
         {
-          !props.recording ?
-          <img src={redMicroPhone} className='microphone' alt='redMicro' />
+          props.takingNotes ?
+            !props.recording ?
+            <img src={redMicroPhone} onClick={props.startNotes} className='microphone' alt='redMicro' />
+            :
+            <img src={greenMicroPhone} onClick={props.stopNotes} className='microphone' alt='greenMicro' />
           :
-          <img src={greenMicroPhone} className='microphone' alt='greenMicro' />
+          null
         }
-        <button>
+        <button onClick={props.openNote} className='note-button'>
           Start Note
         </button>
-        <button>
+        <button onClick={props.storeNote} className='note-button'>
           Save Note
         </button>
+        <button onClick={props.cancelNote} className='note-button'>
+          Cancel Note
+        </button>
+        {
+          props.allNotes.map((note, i) => {
+            return <span style={{margin: '0 5px'}}>{props.audioTime}</span>
+          })
+        }
       </div>
       <div className='note-content-container'>
         <AceEditor 
@@ -38,7 +49,7 @@ export default props => {
           showGutter={false}
           wrapEnabled={true}
           fontSize={16}
-          style={{flex: 1, height: '100%'}}
+          style={{width: '50%', height: '100%'}}
         />
         <Notes notes={props.notes} />
       </div>

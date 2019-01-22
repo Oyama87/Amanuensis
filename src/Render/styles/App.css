@@ -29,7 +29,7 @@ header {
   height: 30%;
   width: 100%;
   min-height: 150px;
-  border: 1px solid black;
+  /* border: 1px solid black; */
 }
 
 .player-controller {
@@ -39,7 +39,7 @@ header {
   align-items: center;
   width: 100%;
   height: 100%;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   
 }
 
@@ -58,7 +58,7 @@ header {
   height: 100%;
   width: 100%;
   overflow: scroll;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   
 }
 
@@ -67,6 +67,7 @@ header {
   text-decoration: underline;
   font-weight: bold;
   margin: 0;
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
 }
 
 .language-button {
@@ -91,7 +92,7 @@ header {
   display: flex;
   flex-direction: column;
   overflow: scroll;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   
 }
 
@@ -108,7 +109,7 @@ header {
   display: flex;
   justify-content: center;
   align-items: center;
-  border: 1px solid black;
+  /* border: 1px solid black; */
   
   /* font-size: 2em; */
   
@@ -123,21 +124,37 @@ header {
   box-shadow: 6px 6px 5px rgba(0,0,0,0.5);
   text-shadow: 1px 1px 1px rgba(0,0,0,0.2);
   padding: 18px;
-  border: 1px solid black;
-  
+  /* border: 1px solid black; */
+  outline: none;
 }
 
 .search-container {
   width: 100%;
   height: 1.5em;
-  /* flex: 1; */
-  border: 1px solid black;
+  /* border: 1px solid black; */
+  border-bottom: 1px solid black;
   display: flex;
   align-items: center;
+  padding: 6px;
 }
 
 .search-results {
-  border: 1px solid black;
+  /* border: 1px solid black; */
   flex: 4;
   width: 100%;
+}
+
+.search-item {
+  padding: 10px;
+  border-radius: 10px;
+  border: 1px solid black;
+  margin: 10px;
+  font-size: 1.5em;
+  background-color: #f1f1f1;
+  box-shadow: 3px 3px 3px rgba(0,0,0,0.3);
+  text-shadow: 1px 1px 1px rgba(0,0,0,0.3);
+}
+
+.word-match {
+  color: red !important;
 }
