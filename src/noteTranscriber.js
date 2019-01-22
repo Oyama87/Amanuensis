@@ -53,7 +53,7 @@ module.exports = async function takeDictation(windowContents, language, ipc) {
       thresholdEnd: 0,
       verbose: true,
       recordProgram: 'rec',
-      silence: '6.0',
+      silence: '2.0',
     })
     .on('error', console.error)
     .on('end', () => {

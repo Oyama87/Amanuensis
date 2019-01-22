@@ -9,6 +9,8 @@ import 'brace/mode/markdown'
 import 'brace/theme/textmate'
 import 'brace/theme/xcode'
 import 'brace/theme/github'
+import redMicroPhone from '../microphoneRed.svg'
+import greenMicroPhone from '../microphoneGreen.svg'
 const fs = window.require('fs')
 const { ipcRenderer } = window.require('electron')
 
@@ -182,8 +184,14 @@ class App extends Component {
             <p onClick={() => this.sendNewLanguage('ja-JP')}>Change to JP</p>
             <p onClick={() => this.sendNewLanguage('en-US')}>Change to EN</p>          
           </div>
+          {
+            !this.state.recording ?
+            <img src={redMicroPhone} className='microphone' alt='redMicro' />
+            :
+            <img src={greenMicroPhone} className='microphone' alt='greenMicro' />
+          }
           <p onClick={this.startNotes.bind(this)}>Start Note</p>
-          <div style={{height: '20px', width: '20px', borderRadius: '20px', backgroundColor: this.state.recording ? 'grey' : 'red'}}></div>
+          
           <p onClick={this.stopNotes.bind(this)}>Stop Note</p>
         </header>
         <hr />

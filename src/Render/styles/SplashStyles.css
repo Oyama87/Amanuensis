@@ -31,6 +31,10 @@
 .splash-button {
   width: 35%;
   padding: 25px 0;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
   box-sizing: border-box;  
   background-color: steelblue;
   font-size: 2em;

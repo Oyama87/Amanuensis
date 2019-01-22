@@ -33,18 +33,10 @@ header {
   align-items: center;
 }
 
-.marker {
-  position: absolute;
-  top: 0;
-  left: 50%;
-  height: 21px;
-  width: 21px;
-  border-radius: 100px;
-  background-color: orange;
-  text-align: center;
-  font-size: 0.8em;
-  line-height: 21px;
-  vertical-align: center;
+.microphone {
+  height: 35px;
+  width: 35px;
+  cursor: pointer;
 }
 
 hr {
