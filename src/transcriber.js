@@ -1,17 +1,10 @@
 const speech = require('@google-cloud/speech')
 const fs = require('fs')
-const path = require('path')
+// const path = require('path')
 
 
 module.exports = async function transcribe(filePath, windowContents, language) {
   const client = new speech.SpeechClient()
-  
-  // const file = fs.readFileSync(filePath)
-  // const audioBytes = file.toString('base64')
-  
-  // const audio = {
-  //   content: audioBytes
-  // }
   
   console.log('in transcriber.js:', language)
   // if(language !== 'en-US') return
@@ -20,7 +13,7 @@ module.exports = async function transcribe(filePath, windowContents, language) {
     enableWordTimeOffsets: true,
     // enableAutomaticPunctuation: true,
     encoding: 'LINEAR16',
-    // sampleRateHertz: 16000,
+    sampleRateHertz: 16000,
     languageCode: language,
   }
   

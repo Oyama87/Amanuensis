@@ -34,7 +34,7 @@ export default props => {
         </button>
         {
           props.allNotes.map((note, i) => {
-            return <span style={{margin: '0 5px'}}>{props.audioTime}</span>
+            return <span style={{margin: '0 5px'}}>{note.timeStamp}</span>
           })
         }
       </div>
