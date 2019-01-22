@@ -1,16 +1,8 @@
 import React, { Component } from 'react';
 import './styles/App.css'
 import Transcript from './Transcript';
-import Notes from './Notes'
 import SplashScreen from './SplashScreen'
-import AceEditor from 'react-ace'
-import brace from 'brace'
-import 'brace/mode/markdown'
-import 'brace/theme/textmate'
-import 'brace/theme/xcode'
-import 'brace/theme/github'
-import redMicroPhone from '../microphoneRed.svg'
-import greenMicroPhone from '../microphoneGreen.svg'
+import NoteControls from './NoteControls';
 const fs = window.require('fs')
 const { ipcRenderer } = window.require('electron')
 
@@ -170,66 +162,62 @@ class App extends Component {
     })
   }
   
+  updateNotes = (notes) => {
+    this.setState({
+      notes
+    })
+  }
+  
   render() {
     if(!this.state.projectDir) return <SplashScreen create={this.createProject} load={this.loadProject} />
     else return (
       <div className="App">
-        <header>
-          <div className='player-controller'>
-            <p className='project-title'>{this.state.projectTitle}</p>
-            {audio(this.state.audioPath, this.audioElement)}
-          </div>
-          <div className='language-container'>
-          <p>Current Language: {this.state.language}</p>
-            <p onClick={() => this.sendNewLanguage('ja-JP')}>Change to JP</p>
-            <p onClick={() => this.sendNewLanguage('en-US')}>Change to EN</p>          
-          </div>
-          {
-            !this.state.recording ?
-            <img src={redMicroPhone} className='microphone' alt='redMicro' />
-            :
-            <img src={greenMicroPhone} className='microphone' alt='greenMicro' />
-          }
-          <p onClick={this.startNotes.bind(this)}>Start Note</p>
-          
-          <p onClick={this.stopNotes.bind(this)}>Stop Note</p>
-        </header>
-        <hr />
-        <div className='bottom-container'>
-          <Transcript transcriptText={this.state.transcript} />
-          <div className='annotations'>
-            <form onSubmit={this.handleSearch.bind(this)}>
-            <div style={{height: '20px', width: '20px', borderRadius: '20px', backgroundColor: this.state.readyForSearch ? 'green' : 'red'}}></div>
-              <label htmlFor='search'>Search Keyword</label>
-              <input id='search' name='search' type='text' />
-            </form>
-            <button onClick={this.saveNote}>Save Note</button>
-            <AceEditor 
-              mode='markdown'
-              theme='textmate'
-              value={this.state.notes}
-              onChange={notes => this.setState({notes})}
-              height='200px'
-              width='300px'
-              showGutter={false}
-              wrapEnabled={true}
-              fontSize={16}
-            />
-            <div>
-              {
-                this.state.searchResults ?
-                this.state.searchResults.map(wordObj => {
-                  return (
-                    <p onClick={() => this.seekToTimeStamp(wordObj.startTime.seconds)}>
-                      {`00:${wordObj.startTime.seconds} -- `}...{getSurroundingText(wordObj)}...
-                    </p>
-                  )
-                })
-                :
-                <p>No Results</p>
-              }
-              <Notes notes={this.state.notes}/>
+        
+        <div className='left-half'>
+          <header>
+            <div className='player-controller'>
+              <p className='project-title'>{this.state.projectTitle}</p>
+              {audio(this.state.audioPath, this.audioElement)}
             </div>
+            
+            <div className='language-container'>
+              <p className='language-button' onClick={() => this.sendNewLanguage('ja-JP')}>Change to JP</p>
+              <p className='language-button' onClick={() => this.sendNewLanguage('en-US')}>Change to EN</p>          
+              <p className='language-indicator'>Current Language: {this.state.language}</p>
+            </div>
+          </header>
+          <div className='transcript-container'>
+            <Transcript transcriptText={this.state.transcript} />
+          </div>
+        </div>
+          
+        <div className='right-half'>
+          <div className='note-control-container'>
+            <NoteControls 
+              notes={this.state.notes}
+              recording={this.state.recording}
+              updateNotes={this.updateNotes}
+            />
+          </div>
+          
+          <form onSubmit={this.handleSearch.bind(this)}>
+            {/* Search Icon */}
+            <label htmlFor='search'>Search Keyword</label>
+            <input id='search' name='search' type='text' />
+          </form>
+          <div>
+            {
+              this.state.searchResults ?
+              this.state.searchResults.map(wordObj => {
+                return (
+                  <p onClick={() => this.seekToTimeStamp(wordObj.startTime.seconds)}>
+                    {`00:${wordObj.startTime.seconds} -- `}...{getSurroundingText(wordObj)}...
+                  </p>
+                )
+              })
+              :
+              <p>No Results</p>
+            }
           </div>
         </div>
       </div>

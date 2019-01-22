@@ -1,15 +1,35 @@
 .App {
   height: 100vh;
   width: 100vw;
+  display: flex;
+  background-color: white;
+  justify-content: space-around;
+}
+
+.left-half {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  height: 100%;
+  flex: 1;
+}
+
+.right-half {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-evenly;
+  align-items: center;
+  flex: 1;
 }
 
 header {
   display: flex;
-  justify-content: space-evenly;
+  justify-content: space-between;
   align-items: center;
   height: 30%;
   width: 100%;
-  min-height: 140px;
+  min-height: 150px;
 }
 
 .player-controller {
@@ -17,13 +37,15 @@ header {
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
-  width: 20%;
+  width: 100%;
   height: 100%;
 }
 
 .project-title {
   font-size: 2em;
-  margin: 0
+  margin: 0;
+  text-decoration: underline;
+  font-weight: bold;
 }
 
 .language-container {
@@ -31,6 +53,41 @@ header {
   flex-direction: column;
   justify-content: space-evenly;
   align-items: center;
+  height: 100%;
+  width: 100%;
+  overflow: scroll;
+}
+
+.language-indicator {
+  font-size: 1.3em;
+  text-decoration: underline;
+  font-weight: bold;
+  margin: 0;
+}
+
+.language-button {
+  padding: 5%;
+  color: white;
+  font-size: 1.2em;
+  font-weight: bold;
+  border-radius: 100px;
+  outline: none !important;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  box-sizing: border-box;  
+  background-color: steelblue;
+  box-shadow: 5px 5px 5px rgba(0,0,0,0.3);
+  text-shadow: 5px 5px 5px rgba(0,0,0,0.3);
+  cursor: pointer;
+}
+
+.note-control-container {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  overflow: scroll;
 }
 
 .microphone {
@@ -54,18 +111,25 @@ hr {
   padding: 0;
 }
 
-audio {
-  /* margin-top: 25px; */
-}
-
-.transcript {
-  border-right: 1px solid black;
-  width: 50%;
+.transcript-container {
+  /* border-right: 1px solid black; */
+  width: 100%;
   height: 100%;
-  font-size: 2em;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /* font-size: 2em; */
 }
 
-.annotations {
+.transcript-contents {
+  height: 90%;
+  width: 90%;
+  font-size: 1.5em;
+  border-radius: 10px;
+  background-color: #f1f1f1;
+}
+
+.search {
   border-left: 1px solid black;
   width: 50%;
   height: 100%;

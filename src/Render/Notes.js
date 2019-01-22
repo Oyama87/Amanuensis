@@ -1,7 +1,7 @@
 import React from 'react'
-import './styles/App.css'
 import Markdown from 'markdown-to-jsx'
+import './styles/NoteControlStyles.css'
 
 export default (props) => {
-  return <Markdown options={{forceBlock: true}} style={{fontSize: '24px'}}>{props.notes}</Markdown>
+  return <Markdown options={{forceBlock: true}} className='note-markdown'>{props.notes}</Markdown>
 }
