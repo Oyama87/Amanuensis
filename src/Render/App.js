@@ -200,12 +200,15 @@ class App extends Component {
             />
           </div>
           
-          <form onSubmit={this.handleSearch.bind(this)}>
-            {/* Search Icon */}
-            <label htmlFor='search'>Search Keyword</label>
-            <input id='search' name='search' type='text' />
-          </form>
-          <div>
+          <div className='search-container'>
+            <form onSubmit={this.handleSearch.bind(this)}>
+              {/* Search Icon */}
+              <label htmlFor='search'>Search Keyword</label>
+              <input id='search' name='search' type='text' />
+            </form>
+          </div>
+          
+          <div className='search-results'>
             {
               this.state.searchResults ?
               this.state.searchResults.map(wordObj => {

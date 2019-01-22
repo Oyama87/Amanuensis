@@ -12,14 +12,20 @@ import './styles/NoteControlStyles.css'
 
 export default props => {
   return (
-    <div>
+    <div className='top-half'>
       <div className='top-bar'>
-      {
-        !props.recording ?
-        <img src={redMicroPhone} className='microphone' alt='redMicro' />
-        :
-        <img src={greenMicroPhone} className='microphone' alt='greenMicro' />
-      }
+        {
+          !props.recording ?
+          <img src={redMicroPhone} className='microphone' alt='redMicro' />
+          :
+          <img src={greenMicroPhone} className='microphone' alt='greenMicro' />
+        }
+        <button>
+          Start Note
+        </button>
+        <button>
+          Save Note
+        </button>
       </div>
       <div className='note-content-container'>
         <AceEditor 
@@ -32,6 +38,7 @@ export default props => {
           showGutter={false}
           wrapEnabled={true}
           fontSize={16}
+          style={{flexBasis: '45%'}}
         />
         <Notes notes={props.notes} />
       </div>
