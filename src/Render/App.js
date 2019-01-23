@@ -162,11 +162,14 @@ class App extends Component {
     })
   }
   
-  saveNote = () => {
-    fs.writeFile(`${this.state.projectDir}/Notes/${this.state.noteTitle}.md`, 
-    this.state.notes,
-    err => {
-      if(err) return console.log(err)
+  saveNotes = () => {
+    console.log('in saveNotes.')
+    this.state.allNotes.forEach((note, i) => {
+      fs.writeFileSync(`${this.state.projectDir}/Notes/note_${i}.md`,
+      note.text,
+      err => {
+        if(err) return console.log(err)
+      })
     })
   }
   
@@ -181,6 +184,7 @@ class App extends Component {
   }
   
   updateNotes = (notes) => {
+    console.log(notes)
     this.setState({
       notes
     })
@@ -231,6 +235,7 @@ class App extends Component {
               recording={this.state.recording}
               storeNote={this.storeNote}
               startNotes={this.startNotes}
+              saveNotes={this.saveNotes}
               stopNotes={this.stopNotes}
               takingNotes={this.state.takingNotes}
               updateNotes={this.updateNotes}

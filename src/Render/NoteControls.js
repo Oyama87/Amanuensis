@@ -27,14 +27,16 @@ export default props => {
           Start Note
         </button>
         <button onClick={props.storeNote} className='note-button'>
-          Save Note
+          Store Note
         </button>
         <button onClick={props.cancelNote} className='note-button'>
           Cancel Note
         </button>
+        <button onClick={props.saveNotes} className='note-button'>Save Notes</button>
         {
           props.allNotes.map((note, i) => {
-            return <span style={{margin: '0 5px'}}>{note.timeStamp}</span>
+            return <strong style={{margin: '0 5px', color: 'white', backgroundColor: 'green', width: '1.4em', 
+            height: '1.4em', borderRadius: '100px', textAlign:'center', lineHeight: '1.4em', verticalAlign:'center'}}>{i+1}</strong>
           })
         }
       </div>
@@ -43,7 +45,7 @@ export default props => {
           mode='markdown'
           theme='textmate'
           value={props.notes}
-          onChange={props.updateNotes}
+          onChange={(value) => props.updateNotes(value)}
           height='150px'
           width='300px'
           showGutter={false}
